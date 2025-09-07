@@ -1,0 +1,20 @@
+
+services:
+  traefik:
+    image: traefik:v2.10
+    container_name: traefik
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro     # Чтобы Traefik мог читать инфо о контейнерах
+      - ./traefik.yml:/etc/traefik/traefik.yml:ro        # Статический конфиг
+      - ./dynamic_conf.yml:/etc/traefik/dynamic_conf.yml:ro  # Динамический конфиг
+      - ./letsencrypt:/letsencrypt                       # Папка для acme.json (сертификаты)
+    ports:
+      - "80:80"     # HTTP
+      - "443:443"   # HTTPS
+    networks:
+      - traefik_net
+networks:
+  traefik_net:
+    name: "traefik_net"
+    driver: bridge

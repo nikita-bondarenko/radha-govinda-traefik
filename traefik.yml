@@ -1,0 +1,41 @@
+# traefik.yml
+
+log:
+  level: INFO
+
+# entryPoints: HTTP (80) и HTTPS (443)
+entryPoints:
+  web:
+    address: ":80"
+  websecure:
+    address: ":443"
+
+# (Опционально) Включим API и дашборд (insecure)
+api:
+  dashboard: true
+  insecure: true
+
+# Настройка Let’s Encrypt (сертификаты)
+certificatesResolvers:
+  myresolver:
+    acme:
+      email: "brajbas3@gmail.com"
+      storage: "/letsencrypt/acme.json"
+      # HTTP-чика:
+      httpChallenge:
+        entryPoint: web
+
+# Подключаем провайдер file, чтобы брать динамическую конфигурацию
+providers:
+  file:
+    filename: "/etc/traefik/dynamic_conf.yml"
+    watch: true  # Чтобы обновлять на лету при изменениях
+
+# Если хотите также использовать Docker labels, добавьте:
+# providers:
+#   docker:
+#     endpoint: "unix:///var/run/docker.sock"
+#     exposedByDefault: false
+#   file:
+#     filename: "/etc/traefik/dynamic_conf.yml"
+#     watch: true

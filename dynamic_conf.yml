@@ -1,0 +1,54 @@
+# dynamic_conf.yml
+
+http:
+  routers:
+    redirect-to-https:
+      entryPoints:
+        - web
+        - websecure
+      service: "noop@internal"
+      middlewares:
+        - redirect-to-https@file  
+
+    # Роутер для crypto-scan
+    frontend-radha-govinda_router:
+      rule: "Host(`radhagovindadasa.com`)"
+      service: frontend-radha-govinda_svc
+      middlewares:
+        - redirect-to-https@file
+      entryPoints:
+        - websecure   
+        - web     
+      tls:
+        certResolver: myresolver 
+    backend-radha-govinda_router:
+      rule: "Host(`admin.radhagovindadasa.com`)"
+      service: backend-radha-govinda_svc
+      middlewares:
+        - redirect-to-https@file
+      entryPoints:
+        - websecure   
+        - web     
+      tls:
+        certResolver: myresolver 
+  middlewares:
+    redirect-to-https:
+      redirectScheme:
+        scheme: https
+        permanent: true
+
+  services:
+    noop:
+      loadBalancer:
+        servers:
+          - url: "http://127.0.0.1"
+    frontend-radha-govinda_svc:
+      loadBalancer:
+        servers:
+          - url: "http://rg-frontend:3000"
+    backend-radha-govinda_svc:
+      loadBalancer:
+        servers:
+          - url: "http://rg-strapi:1338"
+
+ 
