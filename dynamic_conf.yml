@@ -6,6 +6,7 @@ http:
       entryPoints:
         - web
         - websecure
+      rule: "Host(`radhagovindadasa.com`) || Host(`admin.radhagovindadasa.com`)"
       service: "noop@internal"
       middlewares:
         - redirect-to-https@file  
